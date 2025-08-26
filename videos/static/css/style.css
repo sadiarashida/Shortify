@@ -1,0 +1,201 @@
+/* Professional TikTube Styles */
+:root {
+    --primary-dark: #1e293b;
+    --primary-blue: #334155;
+    --accent-blue: #3b82f6;
+    --secondary-gray: #64748b;
+    --light-gray: #f8fafc;
+    --border-gray: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --success-green: #059669;
+    --warning-orange: #d97706;
+    --danger-red: #dc2626;
+}
+
+/* Custom Card Styling */
+.video-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid var(--border-gray);
+}
+
+.video-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Professional Buttons */
+.btn-professional {
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary-professional {
+    background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+    border: none;
+    color: white;
+}
+
+.btn-primary-professional:hover {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+    transform: translateY(-1px);
+}
+
+/* Video Player Styling */
+.video-container {
+    background-color: var(--primary-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Stats Cards */
+.stats-card {
+    background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    transition: transform 0.2s ease-in-out;
+}
+
+.stats-card:hover {
+    transform: scale(1.05);
+}
+
+/* Professional Form Styling */
+.form-professional {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-gray);
+}
+
+.form-control-professional {
+    border: 2px solid var(--border-gray);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control-professional:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Navigation Enhancements */
+.navbar-professional {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-gray);
+}
+
+/* Profile Image Styling */
+.profile-image-large {
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Comment Section */
+.comment-container {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-gray);
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.comment-container:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Badge Styling */
+.badge-professional {
+    background-color: var(--primary-dark);
+    color: white;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 6px 10px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-count {
+    background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 4px 8px;
+    font-size: 13px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media(max-width:1200px){
+    .video-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media(max-width:768px){
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .navbar-brand {
+        font-size: 20px !important;
+    }
+    
+    .container-fluid {
+        padding: 0 15px;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Professional Text Colors */
+.text-professional-primary {
+    color: var(--text-primary);
+}
+
+.text-professional-secondary {
+    color: var(--text-secondary);
+}
+
+.text-professional-accent {
+    color: var(--accent-blue);
+}
+
+/* Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

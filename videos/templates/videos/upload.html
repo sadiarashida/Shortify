@@ -1,0 +1,145 @@
+{% extends 'videos/base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-9 col-lg-8">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-header bg-white border-0 py-3 rounded-top-4">
+        <h3 class="mb-0 d-flex align-items-center" style="font-weight:700;">
+          <span class="me-2 text-primary"><i class="bi bi-cloud-upload"></i></span>
+          Upload New Video
+        </h3>
+      </div>
+
+      <div class="card-body pt-0">
+        <hr class="mt-0 mb-4" style="opacity:.15;">
+
+        <form method="POST" action="{% url 'upload' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- File Uploads -->
+          <div class="row g-4 mb-2">
+            <!-- Video file -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Video File</label>
+              <label class="upload-tile w-100">
+                <div class="tile-inner">
+                  <i class="bi bi-camera-reels"></i>
+                  <div class="tile-text">
+                    <strong>Choose a video</strong>
+                    <small class="text-muted d-block">MP4, AVI, MOV</small>
+                  </div>
+                </div>
+                <input type="file" name="video" accept="video/*" required>
+              </label>
+            </div>
+
+            <!-- Thumbnail -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Thumbnail Image</label>
+              <label class="upload-tile w-100 tile-secondary">
+                <div class="tile-inner">
+                  <i class="bi bi-image"></i>
+                  <div class="tile-text">
+                    <strong>Choose an image</strong>
+                    <small class="text-muted d-block">JPG, PNG, GIF</small>
+                  </div>
+                </div>
+                <input type="file" name="thumbnail" accept="image/*" required>
+              </label>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Video Title</label>
+            <input type="text" class="form-control form-control-lg" id="title" name="title"
+                   placeholder="Enter an engaging title" required>
+          </div>
+
+          <div class="mb-4">
+            <label for="description" class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="5"
+                      placeholder="Describe your video..." required></textarea>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'videos' %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary" name="submitbutton">
+              <i class="bi bi-cloud-upload"></i> Upload Video
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Page feel */
+  body{ background:#f5f6f8; }
+
+  /* Card polish */
+  .card{ box-shadow: 0 8px 24px rgba(0,0,0,.06)!important; }
+  .rounded-4{ border-radius: 1rem; }
+  .rounded-top-4{ border-top-left-radius:1rem!important; border-top-right-radius:1rem!important; }
+
+  /* Upload tiles (simple, clean, accessible) */
+  .upload-tile{
+    position: relative;
+    display: block;
+    border: 1px dashed #cfd6dd;
+    border-radius: .9rem;
+    padding: 1.25rem;
+    background: #fff;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+  .upload-tile.tile-secondary{ border-color:#d8dee5; }
+  .upload-tile:hover{
+    border-color:#0d6efd;
+    box-shadow: 0 6px 18px rgba(13,110,253,.08);
+  }
+  .upload-tile:focus-within{
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(13,110,253,.15);
+    border-color:#0d6efd;
+  }
+  .upload-tile input[type="file"]{
+    position:absolute; inset:0; opacity:0; cursor:pointer;
+  }
+  .tile-inner{
+    display:flex; align-items:center; gap: .9rem;
+  }
+  .tile-inner i{
+    font-size: 1.8rem; color:#0d6efd;
+  }
+  .tile-secondary .tile-inner i{ color:#6c757d; }
+  .tile-text strong{
+    display:block; font-weight:600; color:#1f2937;
+  }
+
+  /* Form inputs */
+  .form-control{
+    border-radius:.7rem; border:1px solid #d9dee3;
+  }
+  .form-control:focus{
+    border-color:#0d6efd; box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+  }
+
+  /* Buttons – simple solid colors */
+  .btn{ border-radius:.6rem; font-weight:600; }
+  .btn-primary{ background:#0d6efd; border-color:#0d6efd; }
+  .btn-primary:hover{ background:#0b5ed7; border-color:#0b5ed7; }
+  .btn-secondary{ background:#6c757d; border-color:#6c757d; }
+  .btn-secondary:hover{ background:#5c636a; border-color:#5c636a; }
+
+  /* Header rule */
+  hr{ border-top:1px solid #e7ebef; }
+</style>
+
+{% endblock %}

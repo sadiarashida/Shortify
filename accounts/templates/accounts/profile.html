@@ -1,0 +1,81 @@
+{% extends 'videos/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-person-circle"></i> My Profile</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if user_profile.picture %}
+                            <img src="{{ user_profile.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white" style="width: 150px; height: 150px; font-size: 60px;">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Username:</label>
+                            <p class="form-control-plaintext">{{ user.username }}</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">First Name:</label>
+                            <p class="form-control-plaintext">
+                                {% if user.first_name %}
+                                    {{ user.first_name }}
+                                {% else %}
+                                    <span class="text-muted">Not provided</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Last Name:</label>
+                            <p class="form-control-plaintext">
+                                {% if user.last_name %}
+                                    {{ user.last_name }}
+                                {% else %}
+                                    <span class="text-muted">Not provided</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Display Username:</label>
+                            <p class="form-control-plaintext">{{ user_profile.username }}</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Bio/Description:</label>
+                            <p class="form-control-plaintext">
+                                {% if user_profile.description %}
+                                    {{ user_profile.description }}
+                                {% else %}
+                                    <span class="text-muted">No bio provided</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Member Since:</label>
+                            <p class="form-control-plaintext">{{ user.date_joined|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'profile_edit' %}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

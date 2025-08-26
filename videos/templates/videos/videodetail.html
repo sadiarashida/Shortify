@@ -1,0 +1,274 @@
+{% extends 'videos/base.html' %}
+
+{% block content %}
+<!-- Video.js CSS -->
+<link rel='stylesheet' href='https://vjs.zencdn.net/7.21.1/video-js.css'>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+  }
+
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: #0d6efd;
+    border: none;
+  }
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+  }
+
+  .btn-success {
+    background-color: #198754;
+    border: none;
+  }
+  .btn-success:hover {
+    background-color: #157347;
+  }
+
+  .btn-outline-success,
+  .btn-outline-danger {
+    border-radius: 6px;
+  }
+
+  .video-js {
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+  }
+
+  .comment-box {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 0;
+  }
+
+  .comment-box:last-child {
+    border-bottom: none;
+  }
+
+  .recommendation {
+    display: flex;
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .recommendation img {
+    border-radius: 8px;
+  }
+
+  .recommendation-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .recommendation small {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Main Video Column -->
+    <div class="col-lg-8">
+      <!-- Video Player -->
+      <div class="card mb-4">
+        <div class="card-body p-0">
+          <video id="video-player"
+                 class="video-js vjs-default-skin w-100"
+                 controls
+                 preload="auto"
+                 data-setup='{"fluid": true, "responsive": true}'
+                 style="max-height: 500px;">
+            <source src="{{ video.video.url }}" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <!-- Video Info -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title mb-3">{{ video.title }}</h3>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- User Info -->
+            <div class="d-flex align-items-center">
+              {% if userprofile.picture %}
+                <img src="{{ userprofile.picture.url }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="User">
+              {% else %}
+                <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px;">
+                  {{ video.user.username|slice:":1"|upper }}
+                </div>
+              {% endif %}
+              <div>
+                <h6 class="mb-0">
+                  <a href="{% url 'user_profile' video.user.username %}" class="text-decoration-none text-dark">
+                    {{ video.user.username }}
+                  </a>
+                </h6>
+                <small class="text-muted"><i class="bi bi-eye"></i> {{ video.views }} views</small>
+              </div>
+            </div>
+
+            <!-- Likes/Dislikes -->
+            {% if user.is_authenticated %}
+            <div class="btn-group">
+              <a href="{% url 'like_video' video.id %}" class="btn btn-outline-success">
+                <i class="bi bi-hand-thumbs-up"></i> {{ video.likes }}
+              </a>
+              <a href="{% url 'dislike_video' video.id %}" class="btn btn-outline-danger">
+                <i class="bi bi-hand-thumbs-down"></i> {{ video.dislikes }}
+              </a>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">
+              <i class="bi bi-box-arrow-in-right"></i> Login to Rate
+            </a>
+            {% endif %}
+          </div>
+
+          <div class="border-top pt-3">
+            <p class="mb-0">{{ video.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-chat-dots"></i> Comments
+        </div>
+        <div class="card-body">
+          {% if user.is_authenticated %}
+          <form method="POST" action="{% url 'detail' video.id %}" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              <textarea class="form-control" name="textareaComment" rows="3" placeholder="Share your thoughts..."></textarea>
+            </div>
+            <button type="submit" name="submitComment" class="btn btn-success">
+              <i class="bi bi-send"></i> Submit
+            </button>
+          </form>
+          {% else %}
+          <div class="alert alert-info mb-4">
+            <a href="{% url 'login' %}" class="alert-link">Login</a> to add comments.
+          </div>
+          {% endif %}
+
+          {% for comment in queryset %}
+          <div class="comment-box d-flex">
+            {% if comment.picture %}
+              <img src="{{ comment.picture.url }}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;" alt="User">
+            {% else %}
+              <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                {{ comment.user.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            <div>
+              <h6 class="mb-1">
+                <a href="{% url 'user_profile' comment.user.username %}" class="text-decoration-none text-dark">
+                  {{ comment.user.username }}
+                </a>
+              </h6>
+              <p class="mb-1">{{ comment.comment }}</p>
+              {% if user.is_authenticated %}
+              <div class="btn-group btn-group-sm">
+                <a href="{% url 'like_comment' comment.id video.id %}" class="btn btn-outline-success btn-sm">
+                  <i class="bi bi-hand-thumbs-up"></i> {{ comment.likes }}
+                </a>
+                <a href="{% url 'dislike_comment' comment.id video.id %}" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-hand-thumbs-down"></i> {{ comment.dislikes }}
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center text-muted py-4">
+            <i class="bi bi-chat display-4"></i>
+            <p class="mt-2">No comments yet. Be the first!</p>
+          </div>
+          {% endfor %}
+
+          <!-- Pagination -->
+          {% if queryset.has_other_pages %}
+          <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+              {% if queryset.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ queryset.previous_page_number }}">Previous</a></li>
+              {% endif %}
+              <li class="page-item active"><span class="page-link">Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}</span></li>
+              {% if queryset.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ queryset.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ queryset.paginator.num_pages }}">Last</a></li>
+              {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-collection-play"></i> Recommended
+        </div>
+        <div class="card-body p-0">
+          {% for rec_video in recentvideos %}
+          <div class="recommendation">
+            <a href="{% url 'detail' rec_video.id %}">
+              <img src="{{ rec_video.thumbnail.url }}" style="width:120px;height:68px;object-fit:cover;" alt="{{ rec_video.title }}">
+            </a>
+            <div class="ms-3 flex-grow-1">
+              <div class="recommendation-title">
+                <a href="{% url 'detail' rec_video.id %}" class="text-decoration-none text-dark">
+                  {{ rec_video.title|truncatewords:6 }}
+                </a>
+              </div>
+              <small>
+                <a href="{% url 'user_profile' rec_video.user.username %}" class="text-muted text-decoration-none">
+                  {{ rec_video.user.username }}
+                </a>
+              </small><br>
+              <small><i class="bi bi-eye"></i> {{ rec_video.views }} • <i class="bi bi-hand-thumbs-up"></i> {{ rec_video.likes }}</small>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center p-4 text-muted">
+            <i class="bi bi-collection display-4"></i>
+            <p>No recommendations available</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Video.js -->
+<script src='https://vjs.zencdn.net/7.21.1/video.min.js'></script>
+<script>
+  var player = videojs('video-player', { fluid: true, responsive: true });
+</script>
+{% load static %}
+<script src="{% static 'js/videoplayer.js' %}"></script>
+{% endblock %}

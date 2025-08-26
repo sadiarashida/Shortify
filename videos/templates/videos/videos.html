@@ -1,0 +1,147 @@
+{% extends 'videos/base.html' %}
+{% load customtags %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="bi bi-play-circle"></i> Latest Videos</h2>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for query in queryset %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card h-100 shadow-sm video-card">
+                <!-- Video Thumbnail -->
+                <div class="position-relative">
+                    <a href="{% url 'detail' query.id %}">
+                        <img src="{{ query.thumbnail.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ query.title }}">
+                    </a>
+                    <span class="badge badge-professional position-absolute top-0 end-0 m-2">
+                        <i class="bi bi-eye"></i> {{ query.views }}
+                    </span>
+                </div>
+                
+                <!-- Video Info -->
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <a href="{% url 'detail' query.id %}" class="text-decoration-none text-dark">
+                            {{ query.title }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted flex-grow-1">{{ query.description|truncatewords:15 }}</p>
+                    
+                    <!-- User Info -->
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-person-circle me-2"></i>
+                        <small class="text-muted">
+                            <a href="{% url 'user_profile' query.user.username %}" class="text-decoration-none">
+                                {{ query.user.username }}
+                            </a>
+                        </small>
+                    </div>
+                    
+                    <!-- Likes Progress Bar -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Likes</small>
+                            <small class="text-muted">{{ query.likes }}/{{ query.likes|add:query.dislikes }}</small>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ likes_percent|get_item:query.id }}%" 
+                                 aria-valuenow="{{ likes_percent|get_item:query.id }}" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Like/Dislike Buttons -->
+                    {% if user.is_authenticated %}
+                    <div class="btn-group w-100" role="group">
+                        <a href="{% url 'like_video_from_list' query.id %}" 
+                           class="btn {% if user_ratings|get_item:query.id == 'like' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
+                            <i class="bi bi-hand-thumbs-up"></i> {{ query.likes }}
+                        </a>
+                        <a href="{% url 'dislike_video_from_list' query.id %}" 
+                           class="btn {% if user_ratings|get_item:query.id == 'dislike' %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm">
+                            <i class="bi bi-hand-thumbs-down"></i> {{ query.dislikes }}
+                        </a>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Rate
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No videos found. Be the first to upload!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if queryset.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Video pagination">
+                <ul class="pagination justify-content-center">
+                    {% if queryset.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">
+                                <i class="bi bi-chevron-double-left"></i> First
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ queryset.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-double-left"></i> First</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if queryset.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ queryset.next_page_number }}">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ queryset.paginator.num_pages }}">
+                                Last <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Last <i class="bi bi-chevron-double-right"></i></span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

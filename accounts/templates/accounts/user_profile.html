@@ -1,0 +1,148 @@
+{% extends 'videos/base.html' %}
+{% load customtags %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- User Profile Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center">
+                            {% if user_profile.picture %}
+                                <img src="{{ user_profile.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3 profile-image-large" style="width: 150px; height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white profile-image-large" style="width: 150px; height: 150px; font-size: 60px;">
+                                    {{ profile_user.username|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h2 class="mb-2">{{ profile_user.username }}</h2>
+                            {% if profile_user.first_name or profile_user.last_name %}
+                                <h5 class="text-muted mb-3">{{ profile_user.first_name }} {{ profile_user.last_name }}</h5>
+                            {% endif %}
+                            
+                            {% if user_profile.description %}
+                                <p class="mb-3">{{ user_profile.description }}</p>
+                            {% endif %}
+                            
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> Member since {{ profile_user.date_joined|date:"F Y" }}
+                            </small>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="card stats-card text-white">
+                                        <div class="card-body">
+                                            <h4 class="card-title">{{ total_videos }}</h4>
+                                            <p class="card-text">Videos</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card stats-card text-white">
+                                        <div class="card-body">
+                                            <h4 class="card-title">{{ total_views }}</h4>
+                                            <p class="card-text">Views</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card stats-card text-white">
+                                        <div class="card-body">
+                                            <h4 class="card-title">{{ total_likes }}</h4>
+                                            <p class="card-text">Likes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User's Videos Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-play-circle"></i> 
+                        Videos by {{ profile_user.username }} 
+                        <span class="badge badge-professional">{{ total_videos }}</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if user_videos %}
+                        <div class="row">
+                            {% for video in user_videos %}
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card h-100 shadow-sm video-card">
+                                    <!-- Video Thumbnail -->
+                                    <div class="position-relative">
+                                        <a href="{% url 'detail' video.id %}">
+                                            <img src="{{ video.thumbnail.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ video.title }}">
+                                        </a>
+                                        <span class="badge badge-professional position-absolute top-0 end-0 m-2">
+                                            <i class="bi bi-eye"></i> {{ video.views }}
+                                        </span>
+                                        <span class="badge bg-secondary position-absolute top-0 start-0 m-2">
+                                            {{ video.created|date:"M d, Y" }}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Video Info -->
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">
+                                            <a href="{% url 'detail' video.id %}" class="text-decoration-none text-dark">
+                                                {{ video.title }}
+                                            </a>
+                                        </h5>
+                                        <p class="card-text text-muted flex-grow-1">{{ video.description|truncatewords:15 }}</p>
+                                        
+                                        <!-- Likes Progress Bar -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <small class="text-muted">Likes</small>
+                                                <small class="text-muted">{{ video.likes }}/{{ video.likes|add:video.dislikes }}</small>
+                                            </div>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     style="width: {{ likes_percent|get_item:video.id }}%" 
+                                                     aria-valuenow="{{ likes_percent|get_item:video.id }}" 
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Video Stats -->
+                                        <div class="d-flex justify-content-between text-muted">
+                                            <small><i class="bi bi-eye"></i> {{ video.views }}</small>
+                                            <small><i class="bi bi-hand-thumbs-up"></i> {{ video.likes }}</small>
+                                            <small><i class="bi bi-hand-thumbs-down"></i> {{ video.dislikes }}</small>
+                                            <small><i class="bi bi-chat"></i> {{ video.comments.count }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-camera-video display-1 text-muted"></i>
+                            <h4 class="mt-3 text-muted">No Videos Yet</h4>
+                            <p class="text-muted">{{ profile_user.username }} hasn't uploaded any videos yet.</p>
+                            {% if user == profile_user %}
+                                <a href="{% url 'upload' %}" class="btn btn-primary">
+                                    <i class="bi bi-cloud-upload"></i> Upload Your First Video
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

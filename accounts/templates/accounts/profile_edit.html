@@ -1,0 +1,87 @@
+{% extends 'videos/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow form-professional">
+            <div class="card-header">
+                <h3 class="mb-0 text-professional-primary"><i class="bi bi-pencil-square"></i> Edit Profile</h3>
+            </div>
+            <div class="card-body">
+                {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle"></i> {{ success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endif %}
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_first_name" class="form-label">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_last_name" class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Display Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Bio/Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_picture" class="form-label">Profile Picture</label>
+                        {% if form.instance.picture %}
+                            <div class="mb-2">
+                                <p class="text-muted">Current Picture:</p>
+                                <img src="{{ form.instance.picture.url }}" alt="Current Profile Picture" 
+                                     class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                        {% endif %}
+                        {{ form.picture }}
+                        {% if form.picture.errors %}
+                            <div class="text-danger">{{ form.picture.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Choose a new image to replace your current profile picture</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> Update Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
